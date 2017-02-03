@@ -1,0 +1,11 @@
+[Unit]
+Description=Node GPIO
+After=network.target
+
+[Service]
+WorkingDirectory=/root/j5test
+Environment=NODE_ENV=production PORT=1337
+ExecStart=/usr/bin/node index.js
+
+[Install]
+WantedBy=multi-user.target
