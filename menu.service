@@ -3,9 +3,9 @@ Description=Node GPIO
 After=network.target
 
 [Service]
-WorkingDirectory=/root/j5test
+WorkingDirectory=/root/CHIP-simple-menu
 Environment=NODE_ENV=production PORT=1337
-ExecStart=/usr/bin/node index.js
+ExecStart=/usr/bin/node menu.js
 
 [Install]
 WantedBy=multi-user.target

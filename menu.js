@@ -52,8 +52,9 @@ board.on('ready', function() {
         exec('say '+menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' '),function(err,stdout,stderr){})
       } else if(press_count <= menu.length){
         lcd.clear().cursor(0,0).print(menu[press_count-1].label)
-        lcd.clear().cursor(1,0).print(menu[press_count-1].cmd)
-        exec('say '+press_count+'. '+menu[press_count-1].label+'.; '+menu[press_count-1].cmd,function(err,stdout,stderr){})
+        exec('say '+press_count+'. '+menu[press_count-1].label+'.; '+menu[press_count-1].cmd,function(err,stdout,stderr){
+          lcd.clear().cursor(1,0).print(stdout)
+        })
       } else {
         lcd.clear().cursor(0,0).print('unknown command')
         exec('say '+press_count+'. unknown command.',function(err,stdout,stderr){})
