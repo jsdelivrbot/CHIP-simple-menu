@@ -8,18 +8,26 @@ fi
 
 if (whiptail --title "Button Menu" --yesno "Install button menu?" 15 46) then
 
+# installl git
+if ! which git >/dev/null; then
+  apt install -y git
+fi
+
+# install node
 if ! which node >/dev/null; then
   echo "nodejs is not installed!"
   bash <(curl -sL "https://rawgit.com/norgeous/CHIP-customiser/master/scripts/install_nodejs.sh")
 fi
 
-apt install git
+# clone this repo
+rm -r "/root/CHIP-simple-menu/"
+cd "/root/"
+git clone "https://github.com/norgeous/CHIP-simple-menu.git"
+cd "/root/CHIP-simple-menu/"
+npm install
 
-#rm -r /root/folder
-cd /root/
-git clone https://github.com/norgeous/CHIP-simple-menu.git
-
-cp menu.service /etc/systemd/system/menu.service
+# menu.service
+cp "/root/CHIP-simple-menu/menu.service" "/etc/systemd/system/menu.service"
 systemctl enable menu
 systemctl start menu
 
