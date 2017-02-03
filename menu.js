@@ -44,18 +44,18 @@ board.on('ready', function() {
     statusLed.on()
     setTimeout(function(){statusLed.off()},50)
     press_count++
-    lcd.cursor(0,0).print(press_count)
+    lcd.clear().cursor(0,0).print(press_count)
     clearTimeout(press_timeout)
     press_timeout = setTimeout(function(){
       if(press_count===1){
-        lcd.cursor(0,0).print('menu')
+        lcd.clear().cursor(0,0).print('menu')
         exec('say '+menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' '),function(err,stdout,stderr){})
       } else if(press_count <= menu.length){
-        lcd.cursor(0,0).print(menu[press_count-1].label)
-        lcd.cursor(1,0).print(menu[press_count-1].cmd)
+        lcd.clear().cursor(0,0).print(menu[press_count-1].label)
+        lcd.clear().cursor(1,0).print(menu[press_count-1].cmd)
         exec('say '+press_count+'. '+menu[press_count-1].label+'.; '+menu[press_count-1].cmd,function(err,stdout,stderr){})
       } else {
-        lcd.cursor(0,0).print('unknown command')
+        lcd.clear().cursor(0,0).print('unknown command')
         exec('say '+press_count+'. unknown command.',function(err,stdout,stderr){})
       }
       press_count = 0
