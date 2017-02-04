@@ -24,7 +24,7 @@ rm -r "/root/CHIP-simple-menu/"
 cd "/root/"
 git clone "https://github.com/norgeous/CHIP-simple-menu.git"
 cd "/root/CHIP-simple-menu/"
-sudo npm install # why does it need sudo?
+sudo npm install # needs sudo, even as root
 
 # menu.service
 cp "/root/CHIP-simple-menu/menu.service" "/etc/systemd/system/menu.service"
