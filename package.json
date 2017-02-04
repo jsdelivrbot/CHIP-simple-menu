@@ -19,8 +19,9 @@
     "url": "https://github.com/norgeous/CHIP-simple-menu/issues"
   },
   "homepage": "https://github.com/norgeous/CHIP-simple-menu#readme",
-  "devDependencies": {
+  "dependencies": {
     "chip-io": "^2.1.1",
-    "johnny-five": "^0.10.6"
+    "johnny-five": "^0.10.6",
+    "moment": "^2.17.1"
   }
 }
