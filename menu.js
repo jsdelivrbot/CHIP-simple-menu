@@ -20,6 +20,8 @@ board.on('ready', function() {
 
   var statusLed = new chipio.StatusLed()
   var onboardButton = new chipio.OnboardButton()
+  var thermometer = new chipio.InternalTemperature()
+  var temperature = 'unknown'
   var lcd = new five.LCD({controller: "PCF8574T", address: 0x3f, bus: 1, rows: 2, cols: 16})
 
   var show = function(type, txt, cb){
@@ -43,7 +45,7 @@ board.on('ready', function() {
 
   var menu = [
     {
-      label:'menu',
+      label:'Menu',
       cmd:function(){
         var menulist = menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' ')
         show('lcd2', 'reading menu')
@@ -54,7 +56,7 @@ board.on('ready', function() {
       }
     },
     {
-      label:'uptime',
+      label:'Uptime',
       cmd:function(){
         var uptime = execSync('uptime -p').toString().trim()
         show('lcd2', uptime)
@@ -65,13 +67,18 @@ board.on('ready', function() {
       }
     },
     {
-      label:'temperature',
+      label:'Temperature',
       cmd:function(){
-        //return 'bin=$(( $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5e\` << 4)) | $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5f\` & 0x0F)) )); cel=\`echo $bin | awk \'{printf("%.0f", ($1/10) - 144.7)}\'\`; echo "$cel°C"'
+        //return 'bin=$(( $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5e\` << 4)) | $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5f\` & 0x0F)) )); cel=\`echo $bin | awk \'{printf("%.0f", ($1/10) - 144.7)}\'\`; echo "$cel°C"'        
+        var clock = setInterval(function(){
+          if(press_count) clearInterval(clock)
+          show('lcd2',temperature+'C')
+        },500)
+        show('say',temperature+'C')
       }
     },
     {
-      label:'clock',
+      label:'Clock',
       cmd:function(){
         var clock = setInterval(function(){
           if(press_count) clearInterval(clock)
@@ -81,7 +88,7 @@ board.on('ready', function() {
       }
     },
     {
-      label:'animation',
+      label:'Animation',
       cmd:function(){
         var animation = [
           [
@@ -96,7 +103,7 @@ board.on('ready', function() {
         var f = 0;
         var clock = setInterval(function(){
           if(press_count) clearInterval(clock)
-          show('lcd1',animation[f][0])
+          //show('lcd1',animation[f][0])
           show('lcd2',animation[f][1])
           f++
           if(f>animation.length-1) f=0
@@ -104,7 +111,7 @@ board.on('ready', function() {
       }
     },
     {
-      label:'countdown',
+      label:'Countdown',
       cmd:function(){
         var t = 60*10
         var clock = setInterval(function(){
@@ -119,15 +126,21 @@ board.on('ready', function() {
       }
     },
     {
-      label:'reboot',
+      label:'Reboot',
       cmd:function(){
         //return 'init 6'
+        show('lcd1', 'X')
+        show('lcd2', 'X')
+        execSync('say rebooting; init 6')
       }
     },
     {
-      label:'shutdown',
+      label:'Shutdown',
       cmd:function(){
         //return 'init 0'
+        show('lcd1', 'X')
+        show('lcd2', 'X')
+        execSync('say shutting down; init 0')
       }
     },
   ]
@@ -141,7 +154,7 @@ board.on('ready', function() {
     clearTimeout(press_timeout)
     
     if(typeof menu[press_count-1] !== 'undefined'){
-      show('lcd1',press_count+' '+menu[press_count-1].label)
+      show('lcd1',menu[press_count-1].label)
     } else {
       show('lcd1',press_count+' unknown')
     }
@@ -159,6 +172,11 @@ board.on('ready', function() {
       press_count = 0
     }, press_timeout_length)
 
+  })
+
+  thermometer.on('change', function(data) {
+    temperature = data.celsius.toFixed(2)
+    console.log('Internal temperature is ' + temperature + '°C')
   })
 
   show('lcd1','READY!')
