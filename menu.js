@@ -32,7 +32,7 @@ board.on('ready', function() {
         break;
       case 'lcd1':
         if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
-        lcd.cursor(0,0).print(txt)
+        lcd.clear().cursor(0,0).print(txt)
         break;
       case 'lcd2':
         if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
@@ -45,9 +45,9 @@ board.on('ready', function() {
     {
       label:'menu',
       cmd:function(){
-        var menu = menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' ')
+        var menulist = menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' ')
         show('lcd2', 'reading menu')
-        show('say', menu)
+        show('say', menulist)
         setTimeout(function(){
           show('lcd1','READY!')
         }, 5000)
@@ -109,7 +109,7 @@ board.on('ready', function() {
         var t = 60*10
         var clock = setInterval(function(){
           if(press_count) clearInterval(clock)
-          show('lcd2',t)
+          show('lcd2',t.toString())
           t--
           if(t<0) {
             clearInterval(clock)
