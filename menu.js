@@ -56,6 +56,32 @@ board.on('ready', function() {
       }
     },
     {
+      label:'Countdown',
+      cmd:function(){
+        var t = 60*10
+        var clock = setInterval(function(){
+          if(press_count) clearInterval(clock)
+          show('lcd2',t.toString())
+          if(t%60===0) show('say',t+' seconds remain')
+          t--
+          if(t<0) {
+            clearInterval(clock)
+            show('say','10 minutes has passed')
+          }
+        },1000)
+      }
+    },
+    {
+      label:'Clock',
+      cmd:function(){
+        var clock = setInterval(function(){
+          if(press_count) clearInterval(clock)
+          show('lcd1',moment().format('dddd'))
+          show('lcd2',moment().format('hh:mm:ss a'))
+        },1000)
+      }
+    },
+    {
       label:'Uptime',
       cmd:function(){
         var uptime = execSync('uptime -p').toString().trim()
@@ -75,16 +101,6 @@ board.on('ready', function() {
           show('lcd2',temperature+'C')
         },500)
         show('say',temperature+'C')
-      }
-    },
-    {
-      label:'Clock',
-      cmd:function(){
-        var clock = setInterval(function(){
-          if(press_count) clearInterval(clock)
-          show('lcd1',moment().format('dddd'))
-          show('lcd2',moment().format('hh:mm:ss a'))
-        },1000)
       }
     },
     {
@@ -111,36 +127,24 @@ board.on('ready', function() {
       }
     },
     {
-      label:'Countdown',
-      cmd:function(){
-        var t = 60*10
-        var clock = setInterval(function(){
-          if(press_count) clearInterval(clock)
-          show('lcd2',t.toString())
-          t--
-          if(t<0) {
-            clearInterval(clock)
-            show('say','timer finish')
-          }
-        },1000)
-      }
-    },
-    {
       label:'Reboot',
       cmd:function(){
-        //return 'init 6'
         show('lcd1', 'X')
         show('lcd2', 'X')
-        execSync('say rebooting; init 6')
+        //execSync('say rebooting; init 6')
+        show('say','rebooting', function(){
+          execSync('init 6')
+        })
       }
     },
     {
       label:'Shutdown',
       cmd:function(){
-        //return 'init 0'
         show('lcd1', 'X')
         show('lcd2', 'X')
-        execSync('say shutting down; init 0')
+        show('say','shutting down', function(){
+          execSync('init 0')
+        })
       }
     },
   ]
