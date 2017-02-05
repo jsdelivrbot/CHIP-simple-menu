@@ -22,15 +22,15 @@ board.on('ready', function() {
   var onboardButton = new chipio.OnboardButton()
   var lcd = new five.LCD({controller: "PCF8574T", address: 0x3f, bus: 1, rows: 2, cols: 16})
 
-  var show = function(type, txt){
+  var show = function(type, txt, cb){
     console.log(type, txt)
     switch(type){
       case 'say':
-        exec('say '+txt)
+        exec('say '+txt,function(stdout,stderr){cb()})
         break;
       case 'lcd1':
         if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
-        lcd.clear().cursor(0,0).print(txt)
+        lcd.cursor(0,0).print(txt)
         break;
       case 'lcd2':
         if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
@@ -43,19 +43,29 @@ board.on('ready', function() {
     {
       label:'menu',
       cmd:function(){
-        return 'echo '+menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' ')
+        var menu = menu.map(function(t,i){return (i+1)+'. '+t.label+'.'}).join(' ')
+        show('lcd2', 'reading menu')
+        show('say', menu)
+        setTimeout(function(){
+          show('lcd1','READY!')
+        }, 5000)
       }
     },
     {
       label:'uptime',
       cmd:function(){
-        return 'echo `date "+%I:%M %p, %A, %e %B %Y"` . `uptime -p`'
+        var uptime = execSync('uptime -p')
+        show('lcd2', uptime)
+        show('say', uptime)
+        setTimeout(function(){
+          show('lcd1','READY!')
+        }, 5000)
       }
     },
     {
       label:'temperature',
       cmd:function(){
-        return 'bin=$(( $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5e\` << 4)) | $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5f\` & 0x0F)) )); cel=\`echo $bin | awk \'{printf("%.0f", ($1/10) - 144.7)}\'\`; echo "$cel°C"'
+        //return 'bin=$(( $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5e\` << 4)) | $((\`/usr/sbin/i2cget -y -f 0 0x34 0x5f\` & 0x0F)) )); cel=\`echo $bin | awk \'{printf("%.0f", ($1/10) - 144.7)}\'\`; echo "$cel°C"'
       }
     },
     {
@@ -63,35 +73,31 @@ board.on('ready', function() {
       cmd:function(){
         var clock = setInterval(function(){
           if(press_count) clearInterval(clock)
-          //lcd.clear()
-          var txt = moment().format('dddd')
-          if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
-          lcd.cursor(0,0).print(txt)
-
-          var txt = moment().format('hh:mm:ss a')
-          if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
-          lcd.cursor(1,0).print(txt)
+          show('lcd1',moment().format('dddd'))
+          show('lcd2',moment().format('hh:mm:ss a'))
         },1000)
       }
     },
     {
       label:'animation',
       cmd:function(){}
+        var animation = [
+          [
+            'X+-=X+-=X+-=X+-=',
+            '-=X+-=X+-=X+-=X+'
+          ],
+          [
+            '-=X+-=X+-=X+-=X+',
+            'X+-=X+-=X+-=X+-='
+          ]
+        ]
         var f = 0;
         var clock = setInterval(function(){
           if(press_count) clearInterval(clock)
-          switch(f){
-            case 0:
-              lcd.cursor(0,0).print('X+-=X+-=X+-=X+-=')
-              lcd.cursor(1,0).print('-=X+-=X+-=X+-=X+')
-              break;
-            case 1:
-              lcd.cursor(0,0).print('-=X+-=X+-=X+-=X+')
-              lcd.cursor(1,0).print('X+-=X+-=X+-=X+-=')
-              break;
-          }
+          show('lcd1',animation[f][0])
+          show('lcd2',animation[f][1])
           f++
-          if(f>1) f=0
+          if(f>animation.length-1) f=0
         },50)
       }
     },
@@ -101,7 +107,7 @@ board.on('ready', function() {
         var t = 60*10
         var clock = setInterval(function(){
           if(press_count) clearInterval(clock)
-          lcd.cursor(0,0).print(t)
+          show('lcd2',t)
           t--
           if(t<0) {
             clearInterval(clock)
@@ -113,13 +119,13 @@ board.on('ready', function() {
     {
       label:'reboot',
       cmd:function(){
-        return 'init 6'
+        //return 'init 6'
       }
     },
     {
       label:'shutdown',
       cmd:function(){
-        return 'init 0'
+        //return 'init 0'
       }
     },
   ]
