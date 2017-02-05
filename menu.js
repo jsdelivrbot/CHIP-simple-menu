@@ -26,7 +26,9 @@ board.on('ready', function() {
     console.log(type, txt)
     switch(type){
       case 'say':
-        exec('say '+txt,function(stdout,stderr){cb()})
+        exec('say '+txt,function(stdout,stderr){
+          if(cb) cb()
+        })
         break;
       case 'lcd1':
         if(txt.length<16){txt = " ".repeat(Math.ceil(16-txt.length)/2)+txt} //center short text
@@ -54,7 +56,7 @@ board.on('ready', function() {
     {
       label:'uptime',
       cmd:function(){
-        var uptime = execSync('uptime -p')
+        var uptime = execSync('uptime -p').toString().trim()
         show('lcd2', uptime)
         show('say', uptime)
         setTimeout(function(){
@@ -80,7 +82,7 @@ board.on('ready', function() {
     },
     {
       label:'animation',
-      cmd:function(){}
+      cmd:function(){
         var animation = [
           [
             'X+-=X+-=X+-=X+-=',
