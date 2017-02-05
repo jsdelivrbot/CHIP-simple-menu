@@ -6,6 +6,8 @@ After=network.target
 WorkingDirectory=/root/CHIP-simple-menu
 Environment=NODE_ENV=production PORT=1337
 ExecStart=/usr/bin/node menu.js
+Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target
