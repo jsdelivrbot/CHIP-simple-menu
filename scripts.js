@@ -10,7 +10,7 @@ var say = function(txt, cb) {
 }
 
 var sinewav = function(f=Math.floor((Math.random() * 880) + 220),d=0.5){
-  execSync('( speaker-test -t sine -f '+f+' )& _p=$!; sleep '+(d+0.7)+'; kill -9 $_p')
+  exec('( speaker-test -t sine -f '+f+' )& _p=$!; sleep '+(d+0.7)+'; kill -9 $_p')
 }
 
 var menu = [
@@ -28,7 +28,7 @@ var menu = [
     // 2
     label: 'Countdown',
     cmd: function() {
-      var t = 600
+      var t = 300
       var clock = setInterval(function () {
         switch(true){
           case (t>60 && t%60===0):
