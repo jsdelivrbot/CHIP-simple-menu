@@ -27,7 +27,7 @@ cd "/root/CHIP-simple-menu/"
 sudo npm install # needs sudo, even as root
 
 # menu.service
-cp "/root/CHIP-simple-menu/menu.service" "/etc/systemd/system/menu.service"
+mv "/root/CHIP-simple-menu/menu.service" "/etc/systemd/system/menu.service"
 systemctl enable menu
 systemctl restart menu
 
