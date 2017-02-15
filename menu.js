@@ -8,7 +8,6 @@ var menu = require('./scripts').menu
 var say = require('./scripts').say
 
 execSync('echo none | tee "/sys/class/leds/chip:white:status/trigger"')
-execSync('pulseaudio -D --realtime=false --high-priority=false --system --disallow-module-loading=false')
 
 var board = new five.Board({
   repl: false,
