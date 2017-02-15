@@ -3,11 +3,12 @@ var chipio = require('chip-io')
 var fs = require('fs')
 var exec = require('child_process').exec
 var execSync = require('child_process').execSync
-var moment = require('moment')
 
-var menu = require('./scripts')
+var menu = require('./scripts').menu
+var say = require('./scripts').say
 
 execSync('echo none | tee "/sys/class/leds/chip:white:status/trigger"')
+execSync('pulseaudio -D --realtime=false --high-priority=false --system --disallow-module-loading=false')
 
 var board = new five.Board({
   repl: false,
@@ -17,51 +18,58 @@ var board = new five.Board({
 
 board.on('ready', function() {
   
+  var stats = {
+    press_count: 0,
+    temperature: 'unknown',
+    voltage: 'unknown',
+  }
   var press_timeout
   var press_timeout_length = 2000
-  var press_count = 0
+  var cmdclock
 
   var statusLed = new chipio.StatusLed()
   var onboardButton = new chipio.OnboardButton()
 
   var thermometer = new chipio.InternalTemperature()
-  var temperature = 'unknown'
   thermometer.on('change', function(data) {
-    temperature = data.celsius.toFixed(2)
+    stats.temperature = data.celsius.toFixed(0)
   })
   
   var voltmeter = new chipio.BatteryVoltage()
-  var voltage = 'unknown'
   voltmeter.on('change', function(v) {
-    voltage = v.toFixed(2)
+    stats.voltage = v.toFixed(1)
   });
 
-  var say = function(type, txt, cb){
-    exec('say '+txt,function(stdout,stderr){
-      if(cb) cb()
-    })
-  }
 
-  onboardButton.on('up', function(x) {
-
-    console.log(x)
+  onboardButton.on('up', function() {
     
     statusLed.on()
     setTimeout(function(){statusLed.off()},50)
-    press_count++
-    clearTimeout(press_timeout)
+
+    if(typeof cmdclock === 'object' && cmdclock._idleTimeout !== -1) {
+
+      clearTimeout(cmdclock)
+      say('. cancelled')
+
+    } else {
+
+      stats.press_count++
+      console.log(stats.press_count)
+      clearTimeout(press_timeout)
+          
+      press_timeout = setTimeout(function(){
         
-    press_timeout = setTimeout(function(){
-      if(typeof menu[press_count-1] !== 'undefined'){
-        menu[press_count-1].cmd()
-      } else {
-        say(press_count+' undefined')
-      }
-      press_count = 0
-    }, press_timeout_length)
+        if(typeof menu[stats.press_count-1] !== 'undefined'){
+          cmdclock = menu[stats.press_count-1].cmd(stats)
+        } else {
+          say('. '+stats.press_count+'. command undefined')
+        }
+        stats.press_count = 0
+      }, press_timeout_length)
+    }
 
   })
 
-  say('menu ready')
+  say('. menu ready')
 
 })
