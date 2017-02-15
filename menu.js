@@ -53,9 +53,11 @@ board.on('ready', function() {
 
     } else {
 
-      stats.press_count++
-      console.log(stats.press_count)
       clearTimeout(press_timeout)
+      
+      stats.press_count++
+      say(press_count)
+      console.log(stats.press_count)
           
       press_timeout = setTimeout(function(){
         
