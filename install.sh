@@ -19,6 +19,8 @@ if ! which node >/dev/null; then
   bash <(curl -sL "https://rawgit.com/norgeous/CHIP-customiser/master/scripts/install_nodejs.sh")
 fi
 
+bash <(curl -sL "https://rawgit.com/norgeous/CHIP-customiser/master/scripts/configure_status_led.sh")
+
 # clone this repo
 rm -r "/root/CHIP-simple-menu/"
 cd "/root/"
