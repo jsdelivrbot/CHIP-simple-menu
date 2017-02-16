@@ -7,7 +7,8 @@ var execSync = require('child_process').execSync
 var menu = require('./scripts').menu
 var say = require('./scripts').say
 
-execSync('echo none | tee "/sys/class/leds/chip:white:status/trigger"')
+//execSync('echo none | tee "/sys/class/leds/chip:white:status/trigger"')
+//execSync('statusled none')
 
 var board = new five.Board({
   repl: false,
