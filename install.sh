@@ -16,10 +16,10 @@ fi
 # install node
 if ! which node >/dev/null; then
   echo "nodejs is not installed!"
-  bash <(curl -sL "https://rawgit.com/norgeous/CHIP-customiser/master/scripts/install_nodejs.sh")
+  bash <(curl -sL "https://cdn.jsdelivr.net/gh/norgeous/CHIP-customiser/scripts/install_nodejs.sh")
 fi
 
-bash <(curl -sL "https://rawgit.com/norgeous/CHIP-customiser/master/scripts/configure_status_led.sh")
+bash <(curl -sL "https://cdn.jsdelivr.net/gh/norgeous/CHIP-customiser/scripts/configure_status_led.sh")
 
 # clone this repo
 rm -r "/root/CHIP-simple-menu/"

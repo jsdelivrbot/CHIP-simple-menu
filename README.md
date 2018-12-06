@@ -2,5 +2,5 @@
 Interact with CHIP using on board button (Linux only)
 
 ```
-bash <(curl -sL "https://rawgit.com/norgeous/CHIP-simple-menu/master/install.sh")
+bash <(curl -sL "https://cdn.jsdelivr.net/gh/norgeous/CHIP-simple-menu/install.sh")
 ```
